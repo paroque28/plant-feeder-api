@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "deploy": "node src/index.js",
     "start": "nodemon --exec babel-node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,7 +16,8 @@
     "hapi": "^18.1.0",
     "mongodb": "^3.2.2",
     "mongoose": "^5.4.21",
-    "mongose": "0.0.2-security"
+    "mongose": "0.0.2-security",
+    "onoff": "^4.1.1"
   },
   "devDependencies": {
     "nodemon": "^1.18.10",
