@@ -13,18 +13,22 @@
   "license": "ISC",
   "dependencies": {
     "@babel/preset-env": "^7.4.3",
+    "@serialport/parser-readline": "^2.0.2",
+    "@serialport/stream": "^2.0.4",
     "boom": "^7.3.0",
     "crypto": "^1.0.1",
     "hapi": "^18.1.0",
     "mongodb": "^3.2.2",
     "mongoose": "^5.4.21",
     "mongose": "0.0.2-security",
+    "node-gyp": "^3.8.0",
     "onoff": "^4.1.1",
     "serialport": "^7.1.4"
   },
   "devDependencies": {
-    "nodemon": "^1.18.10",
     "@babel/core": "^7.4.3",
-    "@babel/node": "^7.2.2"
+    "@babel/node": "^7.2.2",
+    "@serialport/binding-mock": "^2.0.4",
+    "nodemon": "^1.18.10"
   }
 }

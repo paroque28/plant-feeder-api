@@ -9,6 +9,11 @@ function createUserRoutes (server) {
       method: 'GET',
       path: '/api/v1/users',
       handler: function(request, reply){
+        if(request.query.name){
+          const { name } = request.query;
+          return User.find({ name });
+        }
+
         return User.find();
       },
     },

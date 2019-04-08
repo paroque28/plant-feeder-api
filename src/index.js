@@ -4,6 +4,9 @@ import Hapi from 'hapi';
 import mongoose from 'mongoose';
 
 import createUserRoutes from './api/v1/user'
+import createHumidityRoutes from './api/v1/humidity'
+import createTemperatureRoutes from './api/v1/temperature'
+import createWaterPumpRoutes from './api/v1/waterpump'
 
 // Create a server with a host and port
 const server=Hapi.server({
@@ -11,6 +14,9 @@ const server=Hapi.server({
     port:80
 });
 createUserRoutes(server);
+createHumidityRoutes(server);
+createTemperatureRoutes(server);
+createWaterPumpRoutes(server);
 
 // Start the server
 const start =  async function() {
@@ -22,10 +28,11 @@ const start =  async function() {
                           useNewUrlParser: true });
 
       mongoose.connection.once('open', () => {
-        console.log('connected to database');
+        console.log('Connected to database!');
+        server.start();
       })
 
-        await server.start();
+
     }
     catch (err) {
         console.log(err);
