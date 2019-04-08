@@ -13,11 +13,14 @@
   "license": "ISC",
   "dependencies": {
     "@babel/preset-env": "^7.4.3",
+    "boom": "^7.3.0",
+    "crypto": "^1.0.1",
     "hapi": "^18.1.0",
     "mongodb": "^3.2.2",
     "mongoose": "^5.4.21",
     "mongose": "0.0.2-security",
-    "onoff": "^4.1.1"
+    "onoff": "^4.1.1",
+    "serialport": "^7.1.4"
   },
   "devDependencies": {
     "nodemon": "^1.18.10",
