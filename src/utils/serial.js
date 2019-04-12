@@ -1,6 +1,6 @@
 import cron from 'node-cron'
 import os from 'os'
-import SerialPort from '@serialport/stream'
+import SerialPort from 'serialport'
 import MockBinding from '@serialport/binding-mock'
 import Readline from '@serialport/parser-readline'
 import Measurement from '../models/measurement'

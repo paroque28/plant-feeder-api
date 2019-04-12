@@ -19,12 +19,14 @@
     "boom": "^7.3.0",
     "crypto": "^1.0.1",
     "hapi": "^18.1.0",
+    "johnny-five": "^1.0.0",
     "mongodb": "^3.2.2",
     "mongoose": "^5.4.21",
     "mongose": "0.0.2-security",
     "node-cron": "^2.0.3",
     "node-gyp": "^3.8.0",
     "onoff": "^4.1.1",
+    "raspi-io": "^10.0.1",
     "serialport": "^7.1.4"
   },
   "devDependencies": {
