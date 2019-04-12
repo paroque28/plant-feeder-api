@@ -77,7 +77,6 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
     updateSensors: function() {
       console.log('Updating data from sensors');
       port.write("labcd\n");
-      port.write("a:1000\n")
     },
 
   };
