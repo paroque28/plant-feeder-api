@@ -1,15 +1,15 @@
 import Boom from 'boom'
 import serial from '../../../utils/serial'
 
-function createTemperatureRoutes (server) {
+function createLuminosityRoutes (server) {
   server.route([
     {
       method: 'GET',
-      path: '/api/v1/temperature',
+      path: '/api/v1/luminosity',
       handler: function(request, reply){
         if(request.query.id){
           const { id } = request.query;
-          return serial.instance.temperature[id];
+          return serial.instance.Luminosity[id];
         }
         throw Boom.badRequest('No sensor specified!');
       },
@@ -17,4 +17,4 @@ function createTemperatureRoutes (server) {
   ])
 }
 
-export default createTemperatureRoutes;
+export default createLuminosityRoutes;

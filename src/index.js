@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 
 import createUserRoutes from './api/v1/user'
 import createHumidityRoutes from './api/v1/humidity'
-import createTemperatureRoutes from './api/v1/temperature'
+import createLuminosityRoutes from './api/v1/luminosity'
 import createWaterPumpRoutes from './api/v1/waterpump'
 
 // Create a server with a host and port
@@ -15,7 +15,7 @@ const server=Hapi.server({
 });
 createUserRoutes(server);
 createHumidityRoutes(server);
-createTemperatureRoutes(server);
+createLuminosityRoutes(server);
 createWaterPumpRoutes(server);
 
 // Start the server
