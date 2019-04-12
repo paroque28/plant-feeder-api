@@ -55,10 +55,10 @@ function createUserRoutes (server) {
           user =new User ({
             username: username, name: name, md5Password:  hash, role: "admin"
           });
+          return user.save();
         } catch (err) {
           throw Boom.badRequest(err);
         }
-        return user.save();
       }
     }
   ])

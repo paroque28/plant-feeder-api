@@ -7,11 +7,12 @@ const PotSchema = new Schema({
       required: true,
       unique: true,
     },
+    plant: { type: Schema.Types.ObjectId, ref: 'Plant' },
     humiditySensor: {
       type: String,
       required: true,
     },
-    luminocitySensor: {
+    luminositySensor: {
       type: String,
       required: true,
     },
