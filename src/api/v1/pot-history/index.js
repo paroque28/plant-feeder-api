@@ -11,15 +11,13 @@ function createPotHistoryRoutes (server) {
       handler: function(request, reply){
         if(request.query.potName){
           const { potName } = request.query;
-          return new Promise(
-            (resolve, reject) => {
-              PotHistory.find({ 'pot.name': potName })
-            .populate('pot')
-            .exec(function(err,hist){
-              console.log(err);
-              console.log(hist);
+          return PotHistory.find()
+            .limit(10)
+            .populate({
+              path: 'pot',
+              match: { name: potName},
+              select: 'name'
             });
-          });
         }
         else {
           throw Boom.badRequest("You should provide a valid name");
