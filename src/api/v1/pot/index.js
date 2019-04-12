@@ -15,7 +15,7 @@ function createPotRoutes (server) {
         }
         return new Promise(
           (resolve, reject) => {
-          Pot.find(params).lean().exec( function(err,pots) {
+          Pot.find(params).lean().populate('plant').exec( function(err,pots) {
             if(err) reject(Boom.badRequest(err));
             if(pots == null) reject(Boom.badRequest(`Couldn't find any pot!`));
             for (let pot of pots){
