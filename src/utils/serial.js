@@ -1,16 +1,22 @@
+import cron from 'node-cron'
+import os from 'os'
 import SerialPort from '@serialport/stream'
 import MockBinding from '@serialport/binding-mock'
 import Readline from '@serialport/parser-readline'
+import Measurement from '../models/measurement'
+console.log(`Running on architecture:  ${os.arch()}`);
 
 const SERIAL_KEY = Symbol.for("Serial");
 var globalSymbols = Object.getOwnPropertySymbols(global);
+let port = null;
 
-// Mock
-SerialPort.Binding = MockBinding;
-MockBinding.createPort('/dev/ROBOT', { echo: true })
-
-// Define port
-const port = new SerialPort('/dev/ROBOT')
+if(os.arch() == "x64"){
+  // Mock
+  SerialPort.Binding = MockBinding;
+  MockBinding.createPort('/dev/ROBOT', { echo: true })
+  // Define port
+  port = new SerialPort('/dev/ROBOT')
+}
 
 //Define parser
 const parser = new Readline()
@@ -28,20 +34,57 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
       c: -1,
       d: -1,
     },
-    temperature: {
+    luminosity: {
       a: -1,
       b: -1,
       c: -1,
       d: -1,
     },
     lineHandler: function (line) {
-      console.log(line);
-      this.temperature.a = line;
+      let response = line.split(":");
+      if(response.length == 2){
+        if(response[0] == "a" || response[0] == "b" || response[0] == "c" || response[0] == "d"){
+          let rawRead = parseInt(response[1]);
+          if (rawRead< 400) rawRead = 400;
+          this.humidity[response[0]] = Math.round(rawRead*0.16051364366 - 64.205457464);
+          if(os.arch() == "arm64"){
+            let measure = new Measurement ({
+              sensorId: response[0], type: "humidity", date: new Date(), datapoint: this.humidity[response[0]],
+            });
+            measure.save();
+            console.log(`Humidity saved, sensor: ${response[0]}, value: ${this.humidity[response[0]]}`)
+          }
+        }
+        else if (response[0] == "l"){
+          this.luminosity.a = parseInt(response[1]);
+
+          if(os.arch() == "arm64"){
+            let measure = new Measurement ({
+              sensorId: response[0], type: "luminosity", date: new Date(), datapoint: this.luminosity.a,
+            });
+            measure.save();
+            console.log(`Luminosity saved, sensor: ${response[0]}, value: ${response[1]}`);
+          }
+        }
+        else if (response[0] == "p"){
+          console.log(`Pumped sensor: ${response[1]}`);
+        }
+
+      }
+    },
+    updateSensors: function() {
+      console.log('Updating data from sensors');
+      port.write("labcd\n");
+      port.write("a:1000\n")
     },
 
   };
   // Handle newlines inside object
   parser.on('data', line => global[SERIAL_KEY].lineHandler(line))
+  //Enable Cron jobs to update info
+  cron.schedule('*/1 * * * *', () => {
+    global[SERIAL_KEY].updateSensors();
+  });
 }
 
 // Define the singleton API

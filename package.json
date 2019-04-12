@@ -22,6 +22,7 @@
     "mongodb": "^3.2.2",
     "mongoose": "^5.4.21",
     "mongose": "0.0.2-security",
+    "node-cron": "^2.0.3",
     "node-gyp": "^3.8.0",
     "onoff": "^4.1.1",
     "serialport": "^7.1.4"

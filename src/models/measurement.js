@@ -1,8 +1,11 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const PotHistorySchema = new Schema({
-    pot: { type: Schema.Types.ObjectId, ref: 'Pot' },
+const MeasurementSchema = new Schema({
+    sensorId: {
+      type: String,
+      required: true,
+    },
     type: {
       type: String,
       required: true,
@@ -17,4 +20,4 @@ const PotHistorySchema = new Schema({
     },
 })
 
-export default mongoose.model('PotHistory', PotHistorySchema)
+export default mongoose.model('Measurement', MeasurementSchema)

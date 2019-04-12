@@ -10,11 +10,19 @@ import createWaterPumpRoutes from './api/v1/waterpump'
 import createPlantRoutes from './api/v1/plant'
 import createPotHistoryRoutes from './api/v1/pot-history'
 import createPotRoutes from './api/v1/pot'
+import serial from './utils/serial'
 
 // Create a server with a host and port
 const server=Hapi.server({
     host:'0.0.0.0',
     port:80
+});
+server.route({
+  method: 'GET',
+  path:'/',
+  handler: (request, h) => {
+      return 'Welcome to PlantFeeder API!';
+  }
 });
 createUserRoutes(server);
 createHumidityRoutes(server);
@@ -35,6 +43,7 @@ const start =  async function() {
 
       mongoose.connection.once('open', () => {
         console.log('Connected to database!');
+        serial.instance.updateSensors();
         server.start();
       })
 
@@ -46,6 +55,7 @@ const start =  async function() {
     }
 
     console.log('Server running at:', server.info.uri);
+
 };
 
 start();

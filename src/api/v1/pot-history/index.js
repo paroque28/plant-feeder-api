@@ -1,4 +1,4 @@
-import PotHistory from '../../../models/pot-history'
+import Measurement from '../../../models/measurement'
 import Pot from '../../../models/pot'
 import Boom from 'boom'
 
@@ -10,14 +10,31 @@ function createPotHistoryRoutes (server) {
       path: '/api/v1/pot-history',
       handler: function(request, reply){
         if(request.query.potName){
-          const { potName } = request.query;
-          return PotHistory.find()
-            .limit(10)
-            .populate({
-              path: 'pot',
-              match: { name: potName},
-              select: 'name'
-            });
+          const { potName , type} = request.query;
+          return new Promise(
+            (resolve, reject) => {
+              Pot.findOne({name: potName}, 'humiditySensor luminositySensor',  function(err,pot) {
+                if(err) reject(Boom.badRequest(err));
+                if(pot == null) reject(Boom.badRequest(`It doesn't exist pot with name ${potName}`));
+                try {
+                  let params = { sensorId: type == "humidity"? pot.humiditySensor : pot.luminositySensor, type: type};
+                  Measurement.find(params, 'date datapoint')
+                  .limit(10)
+                  .sort('-date')
+                  .exec(function(err,dataset) {
+                    if(err) reject(Boom.badRequest(err));
+                    let result = [];
+                    for (let data of dataset){
+                      result.push( data.datapoint);
+                    }
+                    resolve(result);
+                  });
+                } catch (err) {
+                  reject(Boom.badRequest(err));
+                }
+              });
+
+          });
         }
         else {
           throw Boom.badRequest("You should provide a valid name");
@@ -34,15 +51,23 @@ function createPotHistoryRoutes (server) {
         const { potName, type, datapoint} = request.payload;
         return new Promise(
           (resolve, reject) => {
-          Pot.findOne({name: potName}, '_id',  function(err,pot) {
+          Pot.findOne({name: potName}, 'humiditySensor luminositySensor',  function(err,pot) {
             if(err) reject(Boom.badRequest(err));
             if(pot == null) reject(Boom.badRequest(`It doesn't exist pot with name ${potName}`));
-            let history = null;
+            let measurement = null;
             try {
-              history = new PotHistory ({
-                pot: pot._id, type: type, date: new Date(), datapoint: datapoint,
+              if(type == "humidity")
+              measurement = new Measurement ({
+                sensorId: pot.humiditySensor, type: type, date: new Date(), datapoint: datapoint,
               });
-              resolve(history.save());
+              else if(type == "luminosity")
+              measurement = new Measurement ({
+                sensorId: pot.luminositySensor, type: type, date: new Date(), datapoint: datapoint,
+              });
+              else {
+                reject(Boom.badRequest(`Wrong Type: ${type}`))
+              }
+              resolve(measurement.save());
             } catch (err) {
               reject(Boom.badRequest(err));
             }
