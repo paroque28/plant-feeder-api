@@ -1,7 +1,7 @@
 import Pot from '../../../models/pot'
 import Plant from '../../../models/plant'
 import Boom from 'boom'
-
+import serial from '../../../utils/serial'
 
 function createPotRoutes (server) {
   server.route([
@@ -30,6 +30,22 @@ function createPotRoutes (server) {
     },
     {
       method: 'POST',
+      path: '/api/v1/water-pot',
+      handler: function(request, reply){
+        return new Promise(
+          (resolve, reject) => {
+          Pot.find({name : request.query.name}).exec( function(err,pots) {
+            if(err) reject(Boom.badRequest(err));
+            if(pots == null) reject(Boom.badRequest(`Couldn't find any pot!`));
+            serial.instance.port.write( pots[0].motorSensor +'\n');
+            resolve("Pot watered Succesfuly!");
+          }
+          )
+        });
+      },
+    },
+    {
+      method: 'POST',
       path: '/api/v1/pot',
       handler: function(request, reply){
         if(request.payload == null){
@@ -43,7 +59,7 @@ function createPotRoutes (server) {
           (resolve, reject) => {
           Plant.findOne({name: plantName}, '_id',  function(err,plant) {
             if(err) reject(Boom.badRequest(err));
-            if(plant == null) reject(Boom.badRequest(`It desn't exist plant with name ${plantName}`));
+            if(plant == null) reject(Boom.badRequest(`It doesn't exist plant with name ${plantName}`));
             let pot = null;
             try {
               pot = new Pot ({

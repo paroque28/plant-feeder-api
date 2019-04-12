@@ -8,6 +8,7 @@ import createHumidityRoutes from './api/v1/humidity'
 import createLuminosityRoutes from './api/v1/luminosity'
 import createWaterPumpRoutes from './api/v1/waterpump'
 import createPlantRoutes from './api/v1/plant'
+import createPotHistoryRoutes from './api/v1/pot-history'
 import createPotRoutes from './api/v1/pot'
 
 // Create a server with a host and port
@@ -20,6 +21,7 @@ createHumidityRoutes(server);
 createLuminosityRoutes(server);
 createWaterPumpRoutes(server);
 createPlantRoutes(server);
+createPotHistoryRoutes(server);
 createPotRoutes(server);
 
 // Start the server

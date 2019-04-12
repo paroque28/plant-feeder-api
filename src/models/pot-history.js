@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
-const PotDataSchema = new Schema({
+const PotHistorySchema = new Schema({
     pot: { type: Schema.Types.ObjectId, ref: 'Pot' },
     type: {
       type: String,
+      required: true,
+    },
+    date: {
+      type: Date,
       required: true,
     },
     datapoint: {
@@ -13,4 +17,4 @@ const PotDataSchema = new Schema({
     },
 })
 
-export default mongoose.model('PotData', PotDataSchema)
+export default mongoose.model('PotHistory', PotHistorySchema)
