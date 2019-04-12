@@ -13,6 +13,15 @@ function createHumidityRoutes (server) {
         }
         throw Boom.badRequest('No sensor specified!');
       },
+      method: 'GET',
+      path: '/api/v1/humidity-hist',
+      handler: function(request,reply){
+        if(request.query.id){
+          const { id } = request.query;
+          return serial.instance.humidity[id];
+        }
+        throw Boom.badRequest('No sensor specified!');
+      },
     }
   ])
 }
