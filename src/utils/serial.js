@@ -17,7 +17,9 @@ if(os.arch() == "x64"){
   // Define port
   port = new SerialPort('/dev/ROBOT')
 }
-
+else if(os.arch() == "arm"){
+  port = new SerialPort("/dev/ttyACM0", { baudRate: 115200 })
+}
 //Define parser
 const parser = new Readline()
 port.pipe(parser)
@@ -47,7 +49,7 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
           let rawRead = parseInt(response[1]);
           if (rawRead< 400) rawRead = 400;
           this.humidity[response[0]] = Math.round(rawRead*0.16051364366 - 64.205457464);
-          if(os.arch() == "arm64"){
+          if(os.arch() == "arm"){
             let measure = new Measurement ({
               sensorId: response[0], type: "humidity", date: new Date(), datapoint: this.humidity[response[0]],
             });
@@ -58,7 +60,7 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
         else if (response[0] == "l"){
           this.luminosity.a = parseInt(response[1]);
 
-          if(os.arch() == "arm64"){
+          if(os.arch() == "arm"){
             let measure = new Measurement ({
               sensorId: response[0], type: "luminosity", date: new Date(), datapoint: this.luminosity.a,
             });
