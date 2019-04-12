@@ -7,16 +7,18 @@ import createUserRoutes from './api/v1/user'
 import createHumidityRoutes from './api/v1/humidity'
 import createLuminosityRoutes from './api/v1/luminosity'
 import createWaterPumpRoutes from './api/v1/waterpump'
+import createPlantRoutes from './api/v1/plant'
 
 // Create a server with a host and port
 const server=Hapi.server({
-    host:'localhost',
+    host:'0.0.0.0',
     port:80
 });
 createUserRoutes(server);
 createHumidityRoutes(server);
 createLuminosityRoutes(server);
 createWaterPumpRoutes(server);
+createPlantRoutes(server);
 
 // Start the server
 const start =  async function() {
