@@ -44,6 +44,7 @@ const start =  async function() {
       mongoose.connection.once('open', () => {
         console.log('Connected to database!');
         serial.instance.updateSensors();
+        serial.instance.waterPlants();
         server.start();
       })
 
