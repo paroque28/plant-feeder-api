@@ -1,9 +1,10 @@
 import cron from 'node-cron'
 import os from 'os'
-import SerialPort from 'serialport'
 import MockBinding from '@serialport/binding-mock'
 import Readline from '@serialport/parser-readline'
 import Measurement from '../models/measurement'
+const SerialPort = os.arch() == "x64" ? require('@serialport/stream') : require('serialport')
+
 console.log(`Running on architecture:  ${os.arch()}`);
 
 const SERIAL_KEY = Symbol.for("Serial");
@@ -76,7 +77,9 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
     },
     updateSensors: function() {
       console.log('Updating data from sensors');
-      port.write("labcd\n");
+      if(os.arch() == "arm"){
+        port.write("labcd\n");
+      }
     },
 
   };

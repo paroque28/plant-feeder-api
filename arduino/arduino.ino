@@ -7,11 +7,11 @@
 
 */
 
-#define FIRST_PIN 2
+#define FIRST_PIN 0
 #define ZERO 48
-#define LENGTH 4
+#define LENGTH 8
 
-#if LENGTH > 10
+#if LENGTH >10
 #error "Length is higher than available"
 #endif
 
@@ -22,12 +22,15 @@ void setup() {
   for (int thisPin = FIRST_PIN; thisPin < FIRST_PIN + LENGTH; thisPin++) {
     pinMode(thisPin, OUTPUT);
   }
+  pinMode(13, OUTPUT);
 }
 
 void tick(int pin){
   digitalWrite(pin+FIRST_PIN, HIGH);
+  digitalWrite(13, HIGH);
   delay(500);
   digitalWrite(pin+FIRST_PIN, LOW);
+  digitalWrite(13, LOW);
   delay(500);
   Serial.print("p:" );
   Serial.println(pin+FIRST_PIN);
@@ -40,8 +43,8 @@ void loop() {
     if(inByte >= ZERO && inByte <= ZERO+LENGTH-1){
       tick(inByte-ZERO);
     }
-    else if(inByte == 't'){
-      Serial.print("t:");
+    else if(inByte == 'l'){
+      Serial.print("l:");
       Serial.println(analogRead(A0));
     }
     else if(inByte == 'a'){
