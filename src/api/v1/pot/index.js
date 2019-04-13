@@ -8,7 +8,7 @@ function createPotRoutes(server) {
     {
       method: 'GET',
       path: '/api/v1/pot',
-      handler(request, reply) {
+      handler(request) {
         let params = {}
         if (request.query.name) {
           params = { name: request.query.name }
@@ -31,7 +31,7 @@ function createPotRoutes(server) {
     {
       method: 'POST',
       path: '/api/v1/water-pot',
-      handler(request, reply) {
+      handler(request) {
         return new Promise(
           (resolve, reject) => {
           Pot.find({ name: request.query.name }).exec((err, pots) => {
@@ -47,7 +47,7 @@ function createPotRoutes(server) {
     {
       method: 'POST',
       path: '/api/v1/pot',
-      handler(request, reply) {
+      handler(request) {
         if (request.payload == null) {
           throw Boom.badRequest('Invalid query!')
         }
@@ -68,8 +68,8 @@ function createPotRoutes(server) {
                 name, plant: plant._id, humiditySensor, luminositySensor, motorSensor,
               })
               resolve(pot.save())
-            } catch (err) {
-              reject(Boom.badRequest(err))
+            } catch (error) {
+              reject(Boom.badRequest(error))
             }
           })
         },

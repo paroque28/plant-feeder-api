@@ -20,7 +20,7 @@ const server = Hapi.server({
 server.route({
   method: 'GET',
   path: '/',
-  handler: (request, h) => 'Welcome to PlantFeeder API!',
+  handler: () => 'Welcome to PlantFeeder API!',
 })
 createUserRoutes(server)
 createHumidityRoutes(server)

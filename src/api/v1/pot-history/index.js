@@ -8,7 +8,7 @@ function createPotHistoryRoutes(server) {
     {
       method: 'GET',
       path: '/api/v1/pot-history',
-      handler(request, reply) {
+      handler(request) {
         if (request.query.potName) {
           const { potName, type } = request.query
           return new Promise(
@@ -17,20 +17,20 @@ function createPotHistoryRoutes(server) {
                 if (err) reject(Boom.badRequest(err))
                 if (pot == null) reject(Boom.badRequest(`It doesn't exist pot with name ${potName}`))
                 try {
-                  const params = { sensorId: type == 'humidity' ? pot.humiditySensor : pot.luminositySensor, type }
+                  const params = { sensorId: type === 'humidity' ? pot.humiditySensor : pot.luminositySensor, type }
                   Measurement.find(params, 'date datapoint')
                   .limit(10)
                   .sort('-date')
-                  .exec((err, dataset) => {
-                    if (err) reject(Boom.badRequest(err))
+                  .exec((erro, dataset) => {
+                    if (erro) reject(Boom.badRequest(err))
                     const result = []
                     for (const data of dataset) {
                       result.push(data.datapoint)
                     }
                     resolve(result)
                   })
-                } catch (err) {
-                  reject(Boom.badRequest(err))
+                } catch (error) {
+                  reject(Boom.badRequest(error))
                 }
               })
           },
@@ -43,7 +43,7 @@ function createPotHistoryRoutes(server) {
     {
       method: 'POST',
       path: '/api/v1/pot-history',
-      handler(request, reply) {
+      handler(request) {
         if (request.payload == null) {
           throw Boom.badRequest('Invalid query!')
         }
@@ -55,11 +55,11 @@ function createPotHistoryRoutes(server) {
             if (pot == null) reject(Boom.badRequest(`It doesn't exist pot with name ${potName}`))
             let measurement = null
             try {
-              if (type == 'humidity') {
+              if (type === 'humidity') {
  measurement = new Measurement({
                 sensorId: pot.humiditySensor, type, date: new Date(), datapoint,
               })
-} else if (type == 'luminosity') {
+} else if (type === 'luminosity') {
 measurement = new Measurement({
                 sensorId: pot.luminositySensor, type, date: new Date(), datapoint,
               })
@@ -67,8 +67,8 @@ measurement = new Measurement({
                 reject(Boom.badRequest(`Wrong Type: ${type}`))
               }
               resolve(measurement.save())
-            } catch (err) {
-              reject(Boom.badRequest(err))
+            } catch (error) {
+              reject(Boom.badRequest(error))
             }
           })
         },

@@ -7,7 +7,7 @@ function createPlantRoutes(server) {
     {
       method: 'GET',
       path: '/api/v1/plant',
-      handler(request, reply) {
+      handler(request) {
         if (request.query.name) {
           const { name } = request.query
           return Plant.find({ name })
@@ -19,7 +19,7 @@ function createPlantRoutes(server) {
     {
       method: 'POST',
       path: '/api/v1/plant',
-      handler(request, reply) {
+      handler(request) {
         if (request.payload == null) {
           throw Boom.badRequest('Invalid query!')
         }

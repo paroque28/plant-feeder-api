@@ -6,7 +6,7 @@ function createLuminosityRoutes(server) {
     {
       method: 'GET',
       path: '/api/v1/luminosity',
-      handler(request, reply) {
+      handler(request) {
         if (request.query.id) {
           const { id } = request.query
           return serial.instance.Luminosity[id]

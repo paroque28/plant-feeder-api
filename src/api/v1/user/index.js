@@ -8,7 +8,7 @@ function createUserRoutes(server) {
     {
       method: 'GET',
       path: '/api/v1/users',
-      handler(request, reply) {
+      handler(request) {
         if (request.query.name) {
           const { name } = request.query
           return User.find({ name })
@@ -20,18 +20,17 @@ function createUserRoutes(server) {
     {
       method: 'POST',
       path: '/api/v1/login',
-      async handler(request, reply) {
+      async handler(request) {
         if (request.payload == null) {
           throw Boom.unauthorized('invalid parameters')
         }
         const { username, password } = request.payload
         const hash = crypto.createHash('md5').update(password).digest('hex')
-        const res = null
         return new Promise(
           (resolve, reject) => {
           User.findOne({ username }, 'md5Password', (err, user) => {
             if (err) throw Boom.badRequest(err)
-            if (user.md5Password == hash) {
+            if (user.md5Password === hash) {
               resolve('Authorized')
             } else {
               reject(Boom.unauthorized('Invalid username or password'))
@@ -44,7 +43,7 @@ function createUserRoutes(server) {
     {
       method: 'POST',
       path: '/api/v1/users',
-      handler(request, reply) {
+      handler(request) {
         if (request.payload == null) {
           throw Boom.badRequest('Invalid query!')
         }

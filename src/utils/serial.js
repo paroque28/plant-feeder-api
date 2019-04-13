@@ -5,7 +5,7 @@ import Readline from '@serialport/parser-readline'
 import Measurement from '../models/measurement'
 import Pot from '../models/pot'
 
-const SerialPort = os.arch() == 'x64' ? require('@serialport/stream') : require('serialport')
+const SerialPort = os.arch() === 'x64' ? require('@serialport/stream') : require('serialport')
 
 console.log(`Running on architecture:  ${os.arch()}`)
 
@@ -17,13 +17,13 @@ const globalSymbols = Object.getOwnPropertySymbols(global)
 
 let port = null
 
-if (os.arch() == 'x64') {
+if (os.arch() === 'x64') {
   // Mock
   SerialPort.Binding = MockBinding
   MockBinding.createPort('/dev/ROBOT', { echo: true })
   // Define port
   port = new SerialPort('/dev/ROBOT')
-} else if (os.arch() == 'arm') {
+} else if (os.arch() === 'arm') {
   port = new SerialPort('/dev/ttyACM0', { baudRate: 115200 })
 }
 // Define parser
@@ -52,41 +52,41 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)) {
     // Methods
     lineHandler(line) {
       const response = line.split(':')
-      if (response.length == 2) {
-        if (response[0] == 'a' || response[0] == 'b' || response[0] == 'c' || response[0] == 'd') {
-          let rawRead = parseInt(response[1])
+      if (response.length === 2) {
+        if (response[0] === 'a' || response[0] === 'b' || response[0] === 'c' || response[0] === 'd') {
+          let rawRead = parseInt(response[1], 10)
           if (rawRead < 400) rawRead = 400
           this.humidity[response[0]] = Math.round(rawRead * 0.16051364366 - 64.205457464)
-          if (os.arch() == 'arm') {
+          if (os.arch() === 'arm') {
             const measure = new Measurement({
               sensorId: response[0], type: 'humidity', date: new Date(), datapoint: this.humidity[response[0]],
             })
             measure.save()
             console.log(`Humidity saved, sensor: ${response[0]}, value: ${this.humidity[response[0]]}`)
           }
-        } else if (response[0] == 'l' || response[0] == 'm' || response[0] == 'n' || response[0] == 'o') {
-          this.luminosity[response[0]] = parseInt(response[1])
+        } else if (response[0] === 'l' || response[0] === 'm' || response[0] === 'n' || response[0] === 'o') {
+          this.luminosity[response[0]] = parseInt(response[1], 10)
 
-          if (os.arch() == 'arm') {
+          if (os.arch() === 'arm') {
             const measure = new Measurement({
               sensorId: response[0], type: 'luminosity', date: new Date(), datapoint: this.luminosity[response[0]],
             })
             measure.save()
             console.log(`Luminosity saved, sensor: ${response[0]}, value: ${response[1]}`)
           }
-        } else if (response[0] == 'p') {
+        } else if (response[0] === 'p') {
           console.log(`Pumped sensor: ${response[1]}`)
         }
       }
     },
     pump(id) {
-      if (os.arch() == 'arm') {
+      if (os.arch() === 'arm') {
         this.port.write(`${id }\n`)
       }
     },
     updateSensors() {
       console.log('Updating data from sensors...')
-      if (os.arch() == 'arm') {
+      if (os.arch() === 'arm') {
         this.port.write('labcd\n')
       }
     },

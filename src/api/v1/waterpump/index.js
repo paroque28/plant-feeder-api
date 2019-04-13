@@ -6,7 +6,7 @@ function createWaterPumpRoutes(server) {
     {
       method: 'POST',
       path: '/api/v1/waterpump',
-      handler(request, reply) {
+      handler(request) {
         if (request.query.id) {
           const { id } = request.query
           serial.pump(id)
