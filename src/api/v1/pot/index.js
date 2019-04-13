@@ -29,6 +29,30 @@ function createPotRoutes(server) {
       },
     },
     {
+      method: 'GET',
+      path: '/api/v1/potname',
+      handler(request) {
+        let params = {}
+        if (request.query.name) {
+          params = { name: request.query.name }
+        }
+        return new Promise(
+          (resolve, reject) => {
+          Pot.find(params, 'name').lean().exec((err, pots) => {
+            if (err) reject(Boom.badRequest(err))
+            if (pots == null) reject(Boom.badRequest('Couldn\'t find any pot!'))
+            let result = []
+            for (let pot of pots)
+            {
+              result.push(pot.name)
+            }
+            resolve(result)
+          })
+        },
+)
+      },
+    },
+    {
       method: 'POST',
       path: '/api/v1/water-pot',
       handler(request) {
