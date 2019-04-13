@@ -44,10 +44,10 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
       d: -1,
     },
     luminosity: {
-      a: -1,
-      b: -1,
-      c: -1,
-      d: -1,
+      l: -1,
+      m: -1,
+      n: -1,
+      o: -1,
     },
     port: port,
     // Methods
@@ -66,8 +66,8 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
             console.log(`Humidity saved, sensor: ${response[0]}, value: ${this.humidity[response[0]]}`)
           }
         }
-        else if (response[0] == "l"){
-          this.luminosity.a = parseInt(response[1]);
+        else if (response[0] == "l"|| response[0] == "m" || response[0] == "n" || response[0] == "o"){
+          this.luminosity[response[0]] = parseInt(response[1]);
 
           if(os.arch() == "arm"){
             let measure = new Measurement ({
@@ -128,7 +128,7 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
     global[SERIAL_KEY].updateSensors();
   });
   // Enable Cron for watering
-  cron.schedule('*/1 * * * *', () => {
+  cron.schedule('*/2 * * * *', () => {
     global[SERIAL_KEY].waterPlants();
   });
 }
