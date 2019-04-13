@@ -71,7 +71,7 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
 
           if(os.arch() == "arm"){
             let measure = new Measurement ({
-              sensorId: response[0], type: "luminosity", date: new Date(), datapoint: this.luminosity.a,
+              sensorId: response[0], type: "luminosity", date: new Date(), datapoint: this.luminosity[response[0]],
             });
             measure.save();
             console.log(`Luminosity saved, sensor: ${response[0]}, value: ${response[1]}`);
@@ -96,12 +96,12 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
     },
     waterPlants: function(){
       let instance = this;
-      console.log("Watering plants routine");
       Pot.find({}, ' name humiditySensor luminositySensor motorSensor')
       .populate({ path: 'plant', select: 'minHumidity' })
       .exec( function (err, pots) {
         if (err) console.log(err);
         for (let pot of pots){
+            console.log("------------------")
             const currentHumidity = instance.humidity[pot.humiditySensor];
             const currentLuminosity = instance.luminosity[pot.luminositySensor];
             console.log(`Pot: ${pot.name} Humidity: ${currentHumidity} Luminosity: ${currentLuminosity}.`)
@@ -128,7 +128,7 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
     global[SERIAL_KEY].updateSensors();
   });
   // Enable Cron for watering
-  cron.schedule('*/1 * * * *', () => {
+  cron.schedule('*/2 * * * *', () => {
     global[SERIAL_KEY].waterPlants();
   });
 }
