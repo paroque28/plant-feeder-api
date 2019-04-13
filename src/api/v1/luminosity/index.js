@@ -1,20 +1,20 @@
 import Boom from 'boom'
 import serial from '../../../utils/serial'
 
-function createLuminosityRoutes (server) {
+function createLuminosityRoutes(server) {
   server.route([
     {
       method: 'GET',
       path: '/api/v1/luminosity',
-      handler: function(request, reply){
-        if(request.query.id){
-          const { id } = request.query;
-          return serial.instance.Luminosity[id];
+      handler(request, reply) {
+        if (request.query.id) {
+          const { id } = request.query
+          return serial.instance.Luminosity[id]
         }
-        throw Boom.badRequest('No sensor specified!');
+        throw Boom.badRequest('No sensor specified!')
       },
-    }
+    },
   ])
 }
 
-export default createLuminosityRoutes;
+export default createLuminosityRoutes

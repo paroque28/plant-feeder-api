@@ -1,67 +1,67 @@
-import User from '../../../models/user'
 import crypto from 'crypto'
 import Boom from 'boom'
+import User from '../../../models/user'
 
 
-function createUserRoutes (server) {
+function createUserRoutes(server) {
   server.route([
     {
       method: 'GET',
       path: '/api/v1/users',
-      handler: function(request, reply){
-        if(request.query.name){
-          const { name } = request.query;
-          return User.find({ name });
+      handler(request, reply) {
+        if (request.query.name) {
+          const { name } = request.query
+          return User.find({ name })
         }
 
-        return User.find();
+        return User.find()
       },
     },
     {
       method: 'POST',
       path: '/api/v1/login',
-      handler: async function(request, reply){
-        if(request.payload == null){
-          throw Boom.unauthorized('invalid parameters');
+      async handler(request, reply) {
+        if (request.payload == null) {
+          throw Boom.unauthorized('invalid parameters')
         }
-        const { username, password} = request.payload;
-        const hash = crypto.createHash('md5').update(password).digest("hex");
-        let res = null;
+        const { username, password } = request.payload
+        const hash = crypto.createHash('md5').update(password).digest('hex')
+        const res = null
         return new Promise(
           (resolve, reject) => {
-          User.findOne({username: username}, 'md5Password',  function(err,user) {
-            if(err) throw Boom.badRequest(err);
+          User.findOne({ username }, 'md5Password', (err, user) => {
+            if (err) throw Boom.badRequest(err)
             if (user.md5Password == hash) {
-              resolve("Authorized");
+              resolve('Authorized')
+            } else {
+              reject(Boom.unauthorized('Invalid username or password'))
             }
-            else {
-              reject(Boom.unauthorized("Invalid username or password"));
-            }
-          });
-        });
+          })
+        },
+)
       },
     },
     {
       method: 'POST',
       path: '/api/v1/users',
-      handler: function(request, reply){
-        if(request.payload == null){
-          throw Boom.badRequest('Invalid query!');
+      handler(request, reply) {
+        if (request.payload == null) {
+          throw Boom.badRequest('Invalid query!')
         }
-        const { username, name, password} = request.payload;
-        const hash = crypto.createHash('md5').update(password).digest("hex");
-        let user = null;
+        const { username, name, password } = request.payload
+        const hash = crypto.createHash('md5').update(password).digest('hex')
+        let user = null
         try {
-          user =new User ({
-            username: username, name: name, md5Password:  hash, role: "admin"
-          });
-          return user.save();
+          user = new User({
+            username, name, md5Password: hash, role: 'admin',
+          })
+          return user.save()
         } catch (err) {
-          throw Boom.badRequest(err);
+          throw Boom.badRequest(err)
         }
-      }
-    }
+      },
+    },
   ])
 }
 
-export default createUserRoutes;
+export default createUserRoutes
