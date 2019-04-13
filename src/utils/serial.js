@@ -128,7 +128,7 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
     global[SERIAL_KEY].updateSensors();
   });
   // Enable Cron for watering
-  cron.schedule('*/2 * * * *', () => {
+  cron.schedule('*/1 * * * *', () => {
     global[SERIAL_KEY].waterPlants();
   });
 }
