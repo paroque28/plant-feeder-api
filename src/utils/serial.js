@@ -3,12 +3,18 @@ import os from 'os'
 import MockBinding from '@serialport/binding-mock'
 import Readline from '@serialport/parser-readline'
 import Measurement from '../models/measurement'
+import Pot from '../models/pot'
+
 const SerialPort = os.arch() == "x64" ? require('@serialport/stream') : require('serialport')
 
 console.log(`Running on architecture:  ${os.arch()}`);
 
+//Singleton
 const SERIAL_KEY = Symbol.for("Serial");
+const MAXIMUM_LUMINOSITY = 300;
 var globalSymbols = Object.getOwnPropertySymbols(global);
+
+
 let port = null;
 
 if(os.arch() == "x64"){
@@ -30,7 +36,7 @@ port.pipe(parser)
 // If instance doesnt exist
 if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
   global[SERIAL_KEY] = {
-    port: port,
+    // Props
     humidity: {
       a: -1,
       b: -1,
@@ -43,6 +49,8 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
       c: -1,
       d: -1,
     },
+    port: port,
+    // Methods
     lineHandler: function (line) {
       let response = line.split(":");
       if(response.length == 2){
@@ -75,19 +83,53 @@ if (!(globalSymbols.indexOf(SERIAL_KEY) > -1)){
 
       }
     },
-    updateSensors: function() {
-      console.log('Updating data from sensors');
+    pump : function(id){
       if(os.arch() == "arm"){
-        port.write("labcd\n");
+        this.port.write(id +"\n");
       }
+    },
+    updateSensors: function() {
+      console.log('Updating data from sensors...');
+      if(os.arch() == "arm"){
+        this.port.write("labcd\n");
+      }
+    },
+    waterPlants: function(){
+      let instance = this;
+      console.log("Watering plants routine");
+      Pot.find({}, ' name humiditySensor luminositySensor motorSensor')
+      .populate({ path: 'plant', select: 'minHumidity' })
+      .exec( function (err, pots) {
+        if (err) console.log(err);
+        for (let pot of pots){
+            const currentHumidity = instance.humidity[pot.humiditySensor];
+            const currentLuminosity = instance.luminosity[pot.luminositySensor];
+            console.log(`Pot: ${pot.name} Humidity: ${currentHumidity} Luminosity: ${currentLuminosity}.`)
+            if(currentHumidity < pot.plant.minHumidity){
+              console.log(`Pot ${pot.name} needs more water! Current humidity: ${currentHumidity}`);
+              if(currentLuminosity < MAXIMUM_LUMINOSITY){
+                console.log(`Pumping pot ${pot.name}.`);
+                instance.pump(pot.motorSensor);
+              }
+              else{
+                console.log(`Too much light on pot ${pot.name}.`);
+              }
+            }
+        }
+      } )
     },
 
   };
+
   // Handle newlines inside object
   parser.on('data', line => global[SERIAL_KEY].lineHandler(line))
   //Enable Cron jobs to update info
   cron.schedule('*/1 * * * *', () => {
     global[SERIAL_KEY].updateSensors();
+  });
+  // Enable Cron for watering
+  cron.schedule('*/1 * * * *', () => {
+    global[SERIAL_KEY].waterPlants();
   });
 }
 

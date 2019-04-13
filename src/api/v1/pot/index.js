@@ -19,8 +19,8 @@ function createPotRoutes (server) {
             if(err) reject(Boom.badRequest(err));
             if(pots == null) reject(Boom.badRequest(`Couldn't find any pot!`));
             for (let pot of pots){
-              pot["humidity"] = 20;
-              pot["luminosity"] = 500;
+              pot["humidity"] = serial.instance.humidity[pot.humiditySensor];
+              pot["luminosity"] = serial.instance.luminosity[pot.luminositySensor];
             }
             resolve(pots);
           }
@@ -37,7 +37,7 @@ function createPotRoutes (server) {
           Pot.find({name : request.query.name}).exec( function(err,pots) {
             if(err) reject(Boom.badRequest(err));
             if(pots == null) reject(Boom.badRequest(`Couldn't find any pot!`));
-            serial.instance.port.write( pots[0].motorSensor +'\n');
+            serial.instance.pump(pots[0].motorSensor);
             resolve("Pot watered Succesfuly!");
           }
           )

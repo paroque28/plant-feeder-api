@@ -9,8 +9,8 @@ function createWaterPumpRoutes (server) {
       handler: function(request, reply){
         if(request.query.id){
           const { id } = request.query;
-          serial.instance.port.write(id+'\n');
-          return id;
+          serial.pump(id);
+          return `Pumped id ${id}`;
         }
         throw Boom.badRequest('No sensor specified!');
       },
